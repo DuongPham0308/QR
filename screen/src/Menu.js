@@ -17,14 +17,18 @@ class Menu extends Component {
           await AsyncStorage.setItem("password","");   
           await AsyncStorage.setItem("point","");
           await AsyncStorage.setItem("id","");
-          await AsyncStorage.setItem("saveCart",JSON.stringify([])); 
+          await AsyncStorage.setItem("saveCart",JSON.stringify([]));
+          this.props.navigation.state.routeName = 'Login'      
           this.props.navigation2.goBack()
         }
         catch(e){
           console.log(e)
         }
       }
-    componentDidMount (){this.props;debugger}
+    componentDidMount ()
+    {
+        this.props;
+    }
     render() {
         const {
             container, profile, btnText, backDetail, userStyle, Pointname,

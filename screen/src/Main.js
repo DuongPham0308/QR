@@ -19,6 +19,7 @@ class Main extends Component {
   _willBlurSubscription;
   componentWillUnmount() {
     BackgroundTimer.clearInterval(intervalId);
+
   }
   constructor(props) {
     super(props)
@@ -39,6 +40,7 @@ class Main extends Component {
     }
   }
   get = async()=>{
+    
     try{
       if (this.userCheck == null) {
         this.userCheck = await AsyncStorage.getItem("tendangnhap");
@@ -57,7 +59,7 @@ class Main extends Component {
           body: formData,
         }).then((response) => {  console.log(response); return response._bodyText })
           .then((response) => {
-            debugger
+          
             var arrStr1 = response.split(/[:,]/);
             var arrStr2 = response.split(/[:}]/);
             if (arrStr1[1].trim() == "true") {
@@ -81,9 +83,6 @@ class Main extends Component {
     this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
       BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
     );
-    // this._interval = BackgroundTimer.setInterval(() => {
-    //   this.get()
-    // }, 20000);
   }
 
   onBackButtonPressAndroid = () => {

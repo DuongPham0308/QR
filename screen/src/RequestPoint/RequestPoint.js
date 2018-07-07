@@ -50,12 +50,13 @@ class RequestPoint extends Component {
                     <Text style={txtPoint}>Number of Points</Text>
                     <View style={{ backgroundColor: '#fff', width: width / 1.2, height: height / 14, marginTop: 20,borderRadius:20 }}>
                         <TextInput underlineColorAndroid="transparent" 
+                                   keyboardType={'phone-pad'}
                                    onChangeText={(text) => this.setState({ requestPoint: text })}
                                    value={this.state.requestPoint}/>
                     </View>
                     <TouchableOpacity onPress={()=>{
               let formData = new FormData();
-              debugger
+            //   debugger
               formData.append("goiham", 'ThemRequestPoint');
               formData.append("userId", ID);
               formData.append("requestPoint", requestPoint);
@@ -69,7 +70,7 @@ class RequestPoint extends Component {
                 body: formData,
               }).then((response) => {  console.log(response); return response._bodyText })
                 .then((response) => {
-                  debugger
+                //   debugger
                    var arrStr1 = response.split(/[:,]/); 
                    var response2 = arrStr1[1].trim().replace("false}","false")
                    if( response2 == "false" )

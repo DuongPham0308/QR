@@ -19,7 +19,9 @@ import Borrow from './src/Borrow'
 import RequestPoint from './src/RequestPoint/RequestPoint'
 import ListReserve from './src/ListReserve'
 import QRcode from './src/QRcode'
+import SplashScreen from './src/SplashScreen'
 const AppStack = StackNavigator({
+    SplashScreen: {screen: SplashScreen},
     Login: { screen: Login },
     Search: { screen: Search },
     Main :{screen: Main},

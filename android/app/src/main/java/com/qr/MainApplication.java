@@ -1,6 +1,7 @@
 package com.qr;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.facebook.react.ReactApplication;
 import com.ocetnik.timer.BackgroundTimerPackage;
@@ -52,5 +53,26 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
+    // Setup handler for uncaught exceptions.
+    Thread.setDefaultUncaughtExceptionHandler (new Thread.UncaughtExceptionHandler()
+    {
+      @Override
+      public void uncaughtException (Thread thread, Throwable e)
+      {
+        handleUncaughtException (thread, e);
+      }
+    });
+  }
+  public void handleUncaughtException (Thread thread, Throwable e)
+  {
+
+    if(e.getMessage() != "closed" || thread.getName() != "OkHttp Dispatcher"){
+      //Kill the app
+      System.exit(1);
+    }else{
+      //If the OkHttp error occurs we ignore it
+      Log.e("OkHttp Exception","Received exception " + e.getMessage() + "From thread " + thread.getName());
+    }
+
   }
 }

@@ -10,7 +10,7 @@ import {
   StyleSheet,
   Text, TouchableOpacity,
   View,Keyboard,
-  Image, Dimensions, TextInput,StatusBar,AsyncStorage,KeyboardAvoidingView
+  Image, Dimensions,TextInput,StatusBar,AsyncStorage,KeyboardAvoidingView,BackHandler,Alert
 } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import PC from '../media/appIcon/PC.png'
@@ -20,6 +20,8 @@ import { saveNavigation ,savePoint} from '../../actions'
 import { connect } from 'react-redux'
 StatusBar.setHidden(true);
 class Login extends Component {
+  _didFocusSubscription;
+  _willBlurSubscription;
   constructor(props) {
     super(props);
     this.state = { username: '', password: '' };
@@ -28,11 +30,14 @@ class Login extends Component {
     this.name = "";
     this.password = "";
     this.tendangnhap = "";
-
+    this.logic=true;
+    this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
+      BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+    );
   }
-  componentWillMount() {
-    this.get()
-  }
+  // componentWillMount() {
+  //   this.get()
+  // }
   save = async()=>{
     try{
       await AsyncStorage.setItem("tendangnhap",this.tendangnhap);
@@ -45,21 +50,25 @@ class Login extends Component {
       console.log(e)
     }
   }
-  get = async()=>{
-    try{
-      var userCheck = await AsyncStorage.getItem("username")
-      var passwordCheck = await AsyncStorage.getItem("password")
-      var id = await AsyncStorage.getItem("id")
-      var point = await AsyncStorage.getItem("point")
-      this.props.savePoint(point)
-      if (userCheck!= "" && passwordCheck!= "" && userCheck!= null) {
-        this.props.navigation.navigate('Main', { user: userCheck, ID: id, point: point })
-      }
-    }
-    catch(e){
-      console.log(e)
-    }
-  }
+  // get = async()=>{
+  //   try{
+  //     var userCheck = await AsyncStorage.getItem("username")
+  //     var passwordCheck = await AsyncStorage.getItem("password")
+  //     var id = await AsyncStorage.getItem("id")
+  //     var point = await AsyncStorage.getItem("point")
+  //     this.props.savePoint(point)
+  //     if (userCheck!= "" && passwordCheck!= "" && userCheck!= null) {
+  //       this.props.navigation.navigate('Main', { user: userCheck, ID: id, point: point })
+  //     }
+  //     // else 
+  //     // {
+  //     //   this.props.navigation.navigate('Login')
+  //     // }
+  //   }
+  //   catch(e){
+  //     console.log(e)
+  //   }
+  // }
   render() {
     console.log(this.props);
     const { width, height } = Dimensions.get('window')
@@ -79,6 +88,7 @@ class Login extends Component {
                 placeholder='Username'
                 placeholderTextColor={'#fff'}
                 underlineColorAndroid='rgba(0,0,0,0)'
+                keyboardType={'phone-pad'}
                 style={{ height: 40, flex: 1 }}
                 onChangeText={(text) => this.setState({ username: text })}
                 value={this.state.username}
@@ -140,11 +150,7 @@ class Login extends Component {
             </TouchableOpacity>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 50 }}>
-            {/* <TouchableOpacity onPress={() => {
-              alert("OK")
-            }}>
-              <Text style={{ color: 'white' }}> Forgot Password ?</Text>
-            </TouchableOpacity> */}
+            
           </View>
         </View>
       </View>
@@ -152,8 +158,34 @@ class Login extends Component {
   }
   componentDidMount() {
     this.props.saveBien(this.props.navigation)
+    this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
+    BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+  );
   }
+  onBackButtonPressAndroid = () => {
+    if (this.logic) {
+      this.logic = false;
+      Alert.alert(
+            'Exit App',
+            'Exiting the application?', [{
+              text: 'Cancel',
+              onPress: () =>      { this.logic = true;}
+              ,
+              style: 'cancel'
+            }, {
+              text: 'OK',
+              onPress: () => BackHandler.exitApp()
+            },], {
+              cancelable: false
+            }
+          )
+      return true;
+    } else {
+      return false;
+    }
+  };
 }
+
 const mapStateToProps = (state) => {
   return {
     bienManHinh: state.stack,

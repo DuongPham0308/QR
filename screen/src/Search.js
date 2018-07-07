@@ -37,7 +37,7 @@ class Search extends Component {
               body: formData,
             }).then((response) => {  console.log(response); return response._bodyText })
               .then((response) => {
-                debugger
+              
                 var arrStr1 = response.split(/[:,]/);
                 var arrStr2 = response.split(/[:}]/);
                 if (arrStr1[1].trim() == "true") {

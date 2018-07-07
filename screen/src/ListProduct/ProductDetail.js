@@ -52,6 +52,7 @@ class ProductDetail extends Component {
         this.load()
     }
     render() {
+        console.log(this.props.navigation.state.params)
         const { image, name, catalogId, point, ID } = this.props.navigation.state.params
         const { numberCart } = this.props
         const {

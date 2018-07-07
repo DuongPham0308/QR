@@ -79,7 +79,7 @@ class ListBorrow extends Component {
                                                         body: formData,
                                                     }).then((response) => { console.log(response); return response._bodyText; })
                                                         .then((response) =>{   
-                                                                debugger                                                        
+                                                                                                                      
                                                                 var arrStr2 = response.split(/[:}]/);
                                                                 var response2 =arrStr2[1].trim()
                                                                 if(response2 == "true")
