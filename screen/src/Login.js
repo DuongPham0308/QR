@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Text, TouchableOpacity,
   View,Keyboard,
+  TouchableWithoutFeedback ,
   Image, Dimensions,TextInput,StatusBar,AsyncStorage,KeyboardAvoidingView,BackHandler,Alert
 } from 'react-native';
 import { StackNavigator } from 'react-navigation';
@@ -76,83 +77,87 @@ class Login extends Component {
     //thư viện Dimemsions hỗ trợ việc chia hình ảnh theo tỉ lệ màn hình với 2 biến width,height
     return (
       <View style={{ flex: 1, backgroundColor: 'rgb(255,255,255)' }} >
-        <Image resizeMode={'stretch'} source={background} style={{ backgroundColor: '#fff', width, height, position: 'absolute' }} />
-        <View style={{ flex: 1, alignItems: 'center' }}>
-          <Image style={{ width: width - 160, height: height / 5, marginTop: 100 }} resizeMode={'stretch'} source={logo} />
-        </View>
-        <View style={{ flex: 0.5, alignItems: 'center', justifyContent: 'space-between', marginBottom: 35 }}>
-          <KeyboardAvoidingView behavior="padding" style={{ backgroundColor: 'rgba(255,255,255,0.4)', width: width - 80, height: height / 5, borderRadius: 10 }}>
-            <View style={{ flexDirection: 'row', width: width - 80, height: height / 5 / 2 - 1, alignItems: 'center' }}>
-              <Image style={{ padding: 5, width: 40, height: 40 }} resizeMode='stretch' source={require('../../images/user72.png')} />
-              <TextInput
-                placeholder='Username'
-                placeholderTextColor={'#fff'}
-                underlineColorAndroid='rgba(0,0,0,0)'
-                keyboardType={'phone-pad'}
-                style={{ height: 40, flex: 1 }}
-                onChangeText={(text) => this.setState({ username: text })}
-                value={this.state.username}
-              />
+        <TouchableWithoutFeedback style = {{ flex: 1 }} onPress = { Keyboard.dismiss }>
+          <View style = {{ flex: 1 }}>
+            <Image resizeMode={'stretch'} source={background} style={{ backgroundColor: '#fff', width, height, position: 'absolute' }} />
+            <View style={{ flex: 1, alignItems: 'center' }}>
+              <Image style={{ width: width - 160, height: height / 5, marginTop: 100 }} resizeMode={'stretch'} source={logo} />
             </View>
-            <View style={{ backgroundColor: 'black', width: width - 120 - height / 5 / 2 / 2, height: 2, left: 40 }} />
-            <View style={{ flexDirection: 'row', width: width - 80, height: height / 5 / 2 - 1, alignItems: 'center' }}>
-              <Image style={{ padding: 5, width: 40, height: 40 }} resizeMode='stretch' source={require('../../images/lock72.png')} />
-              <TextInput
-                secureTextEntry={true}
-                placeholder='Password'
-                placeholderTextColor={'#fff'}
-                underlineColorAndroid='rgba(0,0,0,0)'
-                style={{ height: 40, flex: 1 }}
-                onChangeText={(text) => this.setState({ password: text })}
-                value={this.state.password}
-              />
-            </View>
-          </KeyboardAvoidingView>
-          <View style={{ position: 'absolute', left: width - 40 - height / 5 / 2 / 2, top: height / 5 / 2 / 2, backgroundColor: 'transparent', borderRadius: height / 5 / 2 }}>
-            <TouchableOpacity onPress={() => {
-              let formData = new FormData();
-              formData.append("goiham", 'KiemTraDangNhap');
-              formData.append("userId", username);
-              formData.append("userPassword", password);
-              const self = this
-              fetch("http://125.253.123.20/managedevice/group.php", {
-                method: "POST",
-                headers: {
-                  'Content-Type': 'multipart/form-data',
-                },
-                body: formData,
-              }).then((response) => {  console.log(response); return response._bodyText })
-                .then((response) => {
-                  var arrStr1 = response.split(/[:,]/);
-                  var arrStr2 = response.split(/[:}]/);
-                  if (arrStr1[1].trim() == "true") {
-                    var a = arrStr1[3].trim().slice(1, arrStr1[3].length - 2);
-                    var b = arrStr1[7].trim().slice(1, arrStr1[7].length - 3);
-                    var c = arrStr1[5].trim().slice(1, arrStr1[5].length - 2);
-                    this.name = a;
-                    this.point = b;
-                    this.id = c;
-                    this.password = password
-                    this.tendangnhap = this.state.username
-                    this.save()
-                    this.props.savePoint(this.point)
-                    this.props.navigation.navigate('Main', { user: a, ID: c, point: b })
-                    Keyboard.dismiss();
-                    this.setState({username:""})
-                    this.setState({password:""})
-                  }
-                  else { alert("Wrong username or password") }
+            <View style={{ flex: 0.5, alignItems: 'center', justifyContent: 'space-between', marginBottom: 35 }}>
+              <KeyboardAvoidingView behavior="padding" style={{ backgroundColor: 'rgba(255,255,255,0.4)', width: width - 80, height: height / 5, borderRadius: 10 }}>
+                <View style={{ flexDirection: 'row', width: width - 80, height: height / 5 / 2 - 1, alignItems: 'center' }}>
+                  <Image style={{ padding: 5, width: 40, height: 40 }} resizeMode='stretch' source={require('../../images/user72.png')} />
+                  <TextInput
+                    placeholder='Username'
+                    placeholderTextColor={'#fff'}
+                    underlineColorAndroid='rgba(0,0,0,0)'
+                    keyboardType={'phone-pad'}
+                    style={{ height: 40, flex: 1 }}
+                    onChangeText={(text) => this.setState({ username: text })}
+                    value={this.state.username}
+                  />
+                </View>
+                <View style={{ backgroundColor: 'black', width: width - 120 - height / 5 / 2 / 2, height: 2, left: 40 }} />
+                <View style={{ flexDirection: 'row', width: width - 80, height: height / 5 / 2 - 1, alignItems: 'center' }}>
+                  <Image style={{ padding: 5, width: 40, height: 40 }} resizeMode='stretch' source={require('../../images/lock72.png')} />
+                  <TextInput
+                    secureTextEntry={true}
+                    placeholder='Password'
+                    placeholderTextColor={'#fff'}
+                    underlineColorAndroid='rgba(0,0,0,0)'
+                    style={{ height: 40, flex: 1 }}
+                    onChangeText={(text) => this.setState({ password: text })}
+                    value={this.state.password}
+                  />
+                </View>
+              </KeyboardAvoidingView>
+              <View style={{ position: 'absolute', left: width - 40 - height / 5 / 2 / 2, top: height / 5 / 2 / 2, backgroundColor: 'transparent', borderRadius: height / 5 / 2 }}>
+                <TouchableOpacity onPress={() => {
+                  let formData = new FormData();
+                  formData.append("goiham", 'KiemTraDangNhap');
+                  formData.append("userId", username);
+                  formData.append("userPassword", password);
+                  const self = this
+                  fetch("http://125.253.123.20/managedevice/group.php", {
+                    method: "POST",
+                    headers: {
+                      'Content-Type': 'multipart/form-data',
+                    },
+                    body: formData,
+                  }).then((response) => {  console.log(response); return response._bodyText })
+                    .then((response) => {
+                      var arrStr1 = response.split(/[:,]/);
+                      var arrStr2 = response.split(/[:}]/);
+                      if (arrStr1[1].trim() == "true") {
+                        var a = arrStr1[3].trim().slice(1, arrStr1[3].length - 2);
+                        var b = arrStr1[7].trim().slice(1, arrStr1[7].length - 3);
+                        var c = arrStr1[5].trim().slice(1, arrStr1[5].length - 2);
+                        this.name = a;
+                        this.point = b;
+                        this.id = c;
+                        this.password = password
+                        this.tendangnhap = this.state.username
+                        this.save()
+                        this.props.savePoint(this.point)
+                        this.props.navigation.navigate('Main', { user: a, ID: c, point: b })
+                        Keyboard.dismiss();
+                        this.setState({username:""})
+                        this.setState({password:""})
+                      }
+                      else { alert("Wrong username or password") }
+                    }
+                    )
                 }
-                )
-            }
-            }>
-              <Image style={{ width: height / 5 / 2, height: height / 5 / 2 }} resizeMode='stretch' source={require('../../images/loginbutton.png')} />
-            </TouchableOpacity>
+                }>
+                  <Image style={{ width: height / 5 / 2, height: height / 5 / 2 }} resizeMode='stretch' source={require('../../images/loginbutton.png')} />
+                </TouchableOpacity>
+              </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 50 }}>
+                
+              </View>
+            </View>
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 50 }}>
-            
-          </View>
-        </View>
+        </TouchableWithoutFeedback>
       </View>
     );
   }

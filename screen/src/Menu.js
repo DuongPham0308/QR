@@ -43,9 +43,11 @@ class Menu extends Component {
                 <View style={{ flex: 1, alignItems: 'center', paddingBottom: 30 }}>
                     <View style={{ flex: 3 }}>
                         <Image source={backgroundProfile} style={profile} />
-                        <Image source={logoPC} style={{position:'absolute',width:width-120,height:height/4-5,marginLeft:65,marginTop:10}}/>
+                        <Image source={logoPC} style={{position:'absolute',width: width * 2 / 3,height:height/4-5, marginTop:10}}/>
                     </View>
-                    <View style={{ flex: 1.3, backgroundColor: '#dadada', width: width - 100, height: height,marginTop:25 }}>
+                    <View style={{ flex: 1.3, backgroundColor: '#dadada', 
+                    width: width * 2 / 3 + 10, height: height,
+                    marginTop:25 }}>
                         <View style={loginContainer}>
                             <Text style={username}>User</Text>
                             <Text style={userStyle}>{user}</Text>
@@ -99,9 +101,9 @@ const styles = StyleSheet.create({
     
     },
     profile: {
-        width: width,
+        width: width * 2 / 3 + 10,
         height: width /2,
-        borderRadius: 60
+        // borderRadius: 60
     },
     backDetail: {
 
