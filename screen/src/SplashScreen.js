@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity,BackHandler,Alert,AsyncStorage } from "react-native";
+import { View, Text, TouchableOpacity,BackHandler,Alert,AsyncStorage,Dimensions,Image } from "react-native";
 import Header from './Header/Header'
 import ListProduct from './ListProduct/ListProduct'
 import { StackNavigator } from 'react-navigation'
 import { connect } from 'react-redux'
-
+import smartlab from '../media/appIcon/smartlab.jpg'
 class SplashScreen extends Component {
     constructor(props) {
         super(props);
@@ -37,10 +37,11 @@ class SplashScreen extends Component {
         }
       }
     render() {
+      const { width, height } = Dimensions.get('window')
         const { user, ID, point } = this.props
         return (
-            <View style={{ flex: 1, backgroundColor: 'red' }}>
-                
+            <View style={{ flex: 1 }}>
+              <Image source={smartlab}  style={{  width, height, }}/>
             </View>
         );
     }
