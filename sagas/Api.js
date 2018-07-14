@@ -17,6 +17,21 @@ function * login(params) {
     return result
 }
 
+function * getProduct(params) {
+    const response = yield axios.post(baseURL, 
+        querystring.stringify(
+            params
+        ), {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+
+    const result = yield response.status === 200 ? response.data : []
+    return result
+}
+
 export const Api = {
-    login
+    login,
+    getProduct
 }

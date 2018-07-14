@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, PureComponent } from 'react'
 import {
     View, Text, TouchableOpacity, StyleSheet,
     Image, ListView, RefreshControl, Dimensions, ScrollView, FlatList
@@ -6,19 +6,68 @@ import {
 import { StackNavigator } from 'react-navigation'
 import FastImage from 'react-native-fast-image'
 import icContact from '../../media/appIcon/contact.png'
-import { saveDataSearch } from '../../../actions'
+import { saveDataSearch, fetchProductAction } from '../../../actions'
 var width = Dimensions.get('window').width;
 import { connect } from 'react-redux'
 var height = Dimensions.get('window').height;
-class ListProduct extends Component {
+class ListProduct extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
             originalData: [],
             searchData: [],
-            mang: []
+            mang: [],
+            isFetching: false
+        }
+
+        page = 0
+        isFirst = true
+        itemData = []
+    }
+
+    componentWillMount() {
+        this.isFirst = true
+        this.page = 0
+        this.itemData = []
+        this.props.onFetchProduct({
+            goiham: 'LayDanhSachThietBiKhongDuocMuon',
+            page: this.page
+        })
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (this.isFirst) {
+            if (nextProps.productData.DANHSACHTHIETBIKHONGMUON.lenght !== 0) {
+                this.itemData = nextProps.productData.DANHSACHTHIETBIKHONGMUON
+                this.isFirst = false
+            }
+        } else {
+            if (nextProps.productData.DANHSACHTHIETBIKHONGMUON.lenght !== 0) {
+                nextProps.productData.DANHSACHTHIETBIKHONGMUON.forEach((element) => {
+                    console.log(element)
+                    this.itemData.splice(0, 0, element)
+                })
+                console.log(this.itemData)
+                this.setState({
+                    isFetching: false
+                })
+            }
         }
     }
+
+    onRefresh() {
+        this.page = this.page + 1
+        this.setState({
+            isFetching: true,
+            page: this.page
+        })
+
+        this.props.onFetchProduct({
+            goiham: 'LayDanhSachThietBiKhongDuocMuon',
+            page: this.page
+        })
+    }
+
     renderSeparator = () =>
         <View
             style={{
@@ -36,7 +85,9 @@ class ListProduct extends Component {
         return (
             <FlatList
                 style={{ margin: 10 }}
-                data={this.props.dataSearch}
+                data={this.itemData}
+                refreshing={this.state.isFetching}
+                onRefresh={() => this.onRefresh()}
                 ItemSeparatorComponent={this.renderSeparator}
                 keyExtractor={(item, id) => id.toString()}
                 renderItem={({ item }) =>
@@ -44,7 +95,7 @@ class ListProduct extends Component {
                         <TouchableOpacity onPress={() => {    
                             this.props.navigation.navigate('ProductDetail', { image: item.image, name: item.catalogName, catalogId: item.catalogId,point:this.props.point,ID:this.props.ID}) }}>
                             <View style={productContainer}>
-                                <FastImage style={productImage} source={{ uri: item.image }} resizeMode={FastImage.resizeMode.contain} />
+                                <FastImage style={productImage} source={{ uri: item.image, cache: FastImage.priority.cacheOnly }} resizeMode={FastImage.resizeMode.cover}/>
                                 <View style={productInfo}>
                                     <Text ellipsizeMode='tail' numberOfLines={1} style={txtName}>{item.catalogName}</Text>
                                     <View style={{ flexDirection: 'row' }}>
@@ -63,21 +114,21 @@ class ListProduct extends Component {
             />
         );
     }
-    componentDidMount() {
-        let formData = new FormData();
-        formData.append("goiham", 'LayDanhSachThietBiKhongDuocMuon');
-        const self = this
-        fetch("http://125.253.123.20/managedevice/group.php", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-            body: formData,
-        }).then((response) => { console.log(response); return response.json(); })
-            .then((response) => {
-                this.props.saveDataSearch(response.DANHSACHTHIETBIKHONGMUON);
-            })
-    }
+    // componentDidMount() {
+        // let formData = new FormData();
+        // formData.append("goiham", 'LayDanhSachThietBiKhongDuocMuon');
+        // const self = this
+        // fetch("http://125.253.123.20/managedevice/group.php", {
+        //     method: "POST",
+        //     headers: {
+        //         'Content-Type': 'multipart/form-data',
+        //     },
+        //     body: formData,
+        // }).then((response) => { console.log(response); return response.json(); })
+        //     .then((response) => {
+        //         this.props.saveDataSearch(response.DANHSACHTHIETBIKHONGMUON);
+        //     })
+    // }
 }
 const { width } = Dimensions.get('window');
 const productWidth = (width - 80) / 2;
@@ -152,12 +203,14 @@ const styles = StyleSheet.create({
 });
 const mapStateToProps = (state) => {
     return {
-        dataSearch: state.dataSearch
+        dataSearch: state.dataSearch,
+        productData: state.productReducer
     }
 };
 const mapDispatchToProps = (dispatch) => {
     return {
-        saveDataSearch: (data) => dispatch(saveDataSearch(data))
+        saveDataSearch: (data) => dispatch(saveDataSearch(data)),
+        onFetchProduct: (params) => dispatch(fetchProductAction(params))
     }
 };
 
