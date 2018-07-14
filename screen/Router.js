@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    StackNavigator, DrawerNavigator, DrawerItems
+    createStackNavigator, DrawerNavigator, DrawerItems
 } from 'react-navigation';
 import {
     Image,
@@ -20,7 +20,7 @@ import RequestPoint from './src/RequestPoint/RequestPoint'
 import ListReserve from './src/ListReserve'
 import QRcode from './src/QRcode'
 import SplashScreen from './src/SplashScreen'
-const AppStack = StackNavigator({
+const AppStack = createStackNavigator({
     SplashScreen: {screen: SplashScreen},
     Login: { screen: Login },
     Search: { screen: Search },

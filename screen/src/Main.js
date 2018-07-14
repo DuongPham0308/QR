@@ -23,6 +23,13 @@ class Main extends Component {
   }
   constructor(props) {
     super(props)
+
+    this.state = {
+        user: this.props.loginData[0].userName,
+        ID: this.props.loginData[0].userId,
+        point: this.props.loginData[0].userPoint
+    }
+
     this.logic = true;
     this._interval = null;
     this.userCheck = null
@@ -119,7 +126,6 @@ class Main extends Component {
     this.drawer.open()
   };
   render() {
-    const { user, ID, point } = this.props.navigation.state.params
     return (
       <Drawer
         ref={(ref) => { this.drawer = ref; }}
@@ -132,7 +138,7 @@ class Main extends Component {
           main: { opacity: (2 - ratio) / 2 }
         })}
       >
-        <Search user={user} ID={ID} point={point} navigation={this.props.navigation} bienManHinh={this.props.bienManHinh} open={this.openControlPanel.bind(this)} />
+        <Search user={this.state.user} ID={this.state.ID} point={this.state.point} navigation={this.props.navigation} bienManHinh={this.props.bienManHinh} open={this.openControlPanel.bind(this)} />
 
       </Drawer>
 
@@ -141,6 +147,7 @@ class Main extends Component {
 }
 const mapStateToProps = (state) => {
   return {
+    loginData: state.loginReducer,
     bienManHinh: state.stack,
     savePointData: state.savePointData
   }

@@ -9,7 +9,13 @@ var height = Dimensions.get('window').height;
 import {connect} from 'react-redux'
 class Menu extends Component {
     constructor(props) {
-        super(props);
+        super(props)
+
+        this.state = {
+            user: this.props.loginData[0].userName,
+            ID: this.props.loginData[0].userId,
+            point: this.props.loginData[0].userPoint
+        }
     }
     save = async()=>{
         try{
@@ -35,7 +41,6 @@ class Menu extends Component {
             btnSignInStyle, btnTextSignIn, loginContainer, pointStyle,
             username, btnTextLogOut, btnLogOutStyle, btnBorrowStyle, btnRequestStyle, btnContactStyle
         } = styles;
-        const {user,ID,point} = this.props.navigation2.state.params
         
         return (
             
@@ -50,11 +55,11 @@ class Menu extends Component {
                     marginTop:25 }}>
                         <View style={loginContainer}>
                             <Text style={username}>User</Text>
-                            <Text style={userStyle}>{user}</Text>
+                            <Text style={userStyle}>{this.state.user}</Text>
                         </View>
                         <View style={loginContainer}>   
                             <Text style={Pointname}>Point</Text>
-                            <Text style={pointStyle}>{this.props.savePointData}</Text>
+                            <Text style={pointStyle}>{this.state.point}</Text>
                         </View>
                     </View>
                 </View>
@@ -62,20 +67,20 @@ class Menu extends Component {
 
                     <TouchableOpacity style={btnBorrowStyle} onPress={() => {
                         this.props.drawer()
-                        this.props.navigation2.navigate('Borrow',{ID:ID})}}>
+                        this.props.navigation2.navigate('Borrow',{ID: this.state.ID})}}>
                         <Text style={btnTextSignIn}>LIST BORROW</Text>
                     </TouchableOpacity>
                     
                     <TouchableOpacity style={btnContactStyle} onPress={() => { 
                         this.props.drawer()
-                        this.props.navigation.navigate('ListReserve', { ID: ID })
+                        this.props.navigation.navigate('ListReserve', { ID: this.state.ID })
                         }} >
                         <Text style={btnTextSignIn}>LIST RESERVE</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={btnRequestStyle} onPress={() => {
                       this.props.drawer()
-                        this.props.navigation2.navigate('RequestPoint',{ID:ID})}} >
+                        this.props.navigation2.navigate('RequestPoint',{ID: this.state.ID})}} >
                         <Text style={btnTextSignIn}>REQUEST POINT</Text>
                     </TouchableOpacity>
                 </View>
@@ -197,6 +202,7 @@ const styles = StyleSheet.create({
 });
 const mapStateToProps =(state)=> {
     return{
+        loginData: state.loginReducer,
         numberCart: state.numberCart,
         bienManHinh:state.stack,
         savePointData: state.savePointData
