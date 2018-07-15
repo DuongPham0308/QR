@@ -8,7 +8,7 @@ import backgroundDetail from '../../media/appIcon/backgrounddetail.png'
 import backList from '../../media/appIcon/back_white.png'
 import cart from '../../media/appIcon/basket.png'
 import { connect } from 'react-redux'
-import { saveQuantity } from '../../../actions';
+import { saveQuantity, fetchProductFailedAction } from '../../../actions';
 var width = Dimensions.get('window').width;
 var height = Dimensions.get('window').height;
 class ProductDetail extends Component {
@@ -162,7 +162,9 @@ class ProductDetail extends Component {
                 </View>
                 <View style={{ width, height: 60, position: 'absolute', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', backgroundColor: 'rgba(0,0,0,0.5)' }}>
                     <TouchableOpacity onPress={() => 
-                        {this.props.navigation.goBack()
+                        {
+                            this.props.backToProduct()
+                            this.props.navigation.goBack()
                             let formData = new FormData();
                                 formData.append("goiham", 'TimKiemSanPhamTheoTenSP');
                                 formData.append("catalogName", '');
@@ -336,7 +338,8 @@ const mapDispatchToProps = (dispatch) => {
         saveCart: (data) => dispatch(saveCart(data)),
         saveDataSearch: (data) => dispatch(saveDataSearch(data)),
         savePoint: (point) => dispatch(savePoint(point)),
-        saveQuantity: (quantity) => dispatch(saveQuantity(quantity))
+        saveQuantity: (quantity) => dispatch(saveQuantity(quantity)),
+        backToProduct: () => dispatch(fetchProductFailedAction())
     }
 };
 export default connect(mapStateToProps, mapDispatchToProps)(ProductDetail)

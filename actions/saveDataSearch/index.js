@@ -1,7 +1,8 @@
-saveDataSearch = (navigate) => {
+saveDataSearch = (navigate, params) => {
     return {
         type:'saveDataSearch',
-        value:navigate
+        value:navigate,
+        isSearch: params
     }
 }
 

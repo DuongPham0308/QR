@@ -6,11 +6,11 @@ import {
 import { StackNavigator } from 'react-navigation'
 import FastImage from 'react-native-fast-image'
 import icContact from '../../media/appIcon/contact.png'
-import { saveDataSearch, fetchProductAction } from '../../../actions'
+import { saveDataSearch, fetchProductAction, fetchProductFailedAction } from '../../../actions'
 var width = Dimensions.get('window').width;
 import { connect } from 'react-redux'
 var height = Dimensions.get('window').height;
-class ListProduct extends PureComponent {
+class ListProduct extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -22,11 +22,13 @@ class ListProduct extends PureComponent {
 
         page = 0
         isFirst = true
+        isSearchBack = false
         itemData = []
     }
 
     componentWillMount() {
         this.isFirst = true
+        this.isSearchBack = false
         this.page = 0
         this.itemData = []
         this.props.onFetchProduct({
@@ -37,21 +39,40 @@ class ListProduct extends PureComponent {
 
     componentWillReceiveProps(nextProps) {
         if (this.isFirst) {
-            if (nextProps.productData.DANHSACHTHIETBIKHONGMUON.lenght !== 0) {
+            if (nextProps.productData.DANHSACHTHIETBIKHONGMUON.length !== 0) {
                 this.itemData = nextProps.productData.DANHSACHTHIETBIKHONGMUON
                 this.isFirst = false
+                this.page = 0
             }
+            console.log('Im here')
         } else {
-            if (nextProps.productData.DANHSACHTHIETBIKHONGMUON.lenght !== 0) {
-                nextProps.productData.DANHSACHTHIETBIKHONGMUON.forEach((element) => {
-                    console.log(element)
-                    this.itemData.splice(0, 0, element)
-                })
-                console.log(this.itemData)
+            if (nextProps.dataSearch.length !== 0 && nextProps.dataSearch.isSearch === true) {
+                this.itemData = nextProps.dataSearch.value
+                this.isSearchBack = true
                 this.setState({
                     isFetching: false
                 })
-            }
+            } else {
+                if (nextProps.dataSearch.isSearch === false && this.isSearchBack === true) {
+                    this.isFirst = true
+                    this.isSearchBack = false
+                    console.log('Reset')
+                } else {
+                    console.log('Push item')
+                    if (nextProps.productData.length !== 0) {
+                        nextProps.productData.DANHSACHTHIETBIKHONGMUON.forEach((element) => {
+                            this.itemData.splice(0, 0, element)
+                        })
+                        this.setState({
+                            isFetching: false
+                        })
+                    } else {
+                        this.setState({
+                            isFetching: false
+                        })
+                    }
+                }
+            }    
         }
     }
 
@@ -95,7 +116,9 @@ class ListProduct extends PureComponent {
                         <TouchableOpacity onPress={() => {    
                             this.props.navigation.navigate('ProductDetail', { image: item.image, name: item.catalogName, catalogId: item.catalogId,point:this.props.point,ID:this.props.ID}) }}>
                             <View style={productContainer}>
-                                <FastImage style={productImage} source={{ uri: item.image, cache: FastImage.priority.cacheOnly }} resizeMode={FastImage.resizeMode.cover}/>
+                                <FastImage style={productImage} 
+                                source={{ uri: item.image, cache: FastImage.priority.cacheOnly }} 
+                                resizeMode={FastImage.resizeMode.contain}/>
                                 <View style={productInfo}>
                                     <Text ellipsizeMode='tail' numberOfLines={1} style={txtName}>{item.catalogName}</Text>
                                     <View style={{ flexDirection: 'row' }}>
@@ -112,23 +135,8 @@ class ListProduct extends PureComponent {
                     </View>
                 }
             />
-        );
+        )
     }
-    // componentDidMount() {
-        // let formData = new FormData();
-        // formData.append("goiham", 'LayDanhSachThietBiKhongDuocMuon');
-        // const self = this
-        // fetch("http://125.253.123.20/managedevice/group.php", {
-        //     method: "POST",
-        //     headers: {
-        //         'Content-Type': 'multipart/form-data',
-        //     },
-        //     body: formData,
-        // }).then((response) => { console.log(response); return response.json(); })
-        //     .then((response) => {
-        //         this.props.saveDataSearch(response.DANHSACHTHIETBIKHONGMUON);
-        //     })
-    // }
 }
 const { width } = Dimensions.get('window');
 const productWidth = (width - 80) / 2;
@@ -209,8 +217,8 @@ const mapStateToProps = (state) => {
 };
 const mapDispatchToProps = (dispatch) => {
     return {
-        saveDataSearch: (data) => dispatch(saveDataSearch(data)),
-        onFetchProduct: (params) => dispatch(fetchProductAction(params))
+        saveDataSearch: (data, isSearch) => dispatch(saveDataSearch(data, isSearch)),
+        onFetchProduct: (params) => dispatch(fetchProductAction(params)),
     }
 };
 

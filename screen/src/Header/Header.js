@@ -6,7 +6,7 @@ import icSearch from '../../media/appIcon/search50.png'
 import icBack from '../../media/appIcon/back.png'
 const { height, width } = Dimensions.get('window');
 import { connect } from 'react-redux'
-import { saveDataSearch } from '../../../actions'
+import { saveDataSearch, fetchProductAction } from '../../../actions'
 class Header extends Component {
     constructor(props) {
         super(props);
@@ -34,7 +34,7 @@ class Header extends Component {
                             onChangeText={text => this.setState({ txtSearch: text })}
                         />
                         <TouchableOpacity style={iconStyle2} onPress={() => {
-                            if (this.state.txtSearch != "") {
+                            if (this.state.txtSearch.trim() != "") {
                                 let formData = new FormData();
                                 formData.append("goiham", 'TimKiemSanPhamTheoTenSP');
                                 formData.append("catalogName", this.state.txtSearch);
@@ -45,29 +45,30 @@ class Header extends Component {
                                         'Content-Type': 'multipart/form-data',
                                     },
                                     body: formData,
-                                }).then((response) => { console.log(response); return response.json(); })
+                                }).then((response) => { return response.json() })
                                     .then((response) => {
+                                        this.props.saveDataSearch(response.DANHSACHSANPHAM, true);
                                         this.setState({ visibleClear: true, visibleDrawer: false })
-                                        this.props.saveDataSearch(response.DANHSACHSANPHAM);
                                     })
                                 this.setState({ txtSearch: "" })
                                 Keyboard.dismiss();
-                            } else {
-                                let formData = new FormData();
-                                formData.append("goiham", 'LayDanhSachThietBiKhongDuocMuon');
-                                const self = this
-                                fetch("http://125.253.123.20/managedevice/group.php", {
-                                    method: "POST",
-                                    headers: {
-                                        'Content-Type': 'multipart/form-data',
-                                    },
-                                    body: formData,
-                                }).then((response) => { console.log(response); return response.json(); })
-                                    .then((response) => {
-                                        this.setState({ visibleClear: false, visibleDrawer: true })
-                                        this.props.saveDataSearch(response.DANHSACHTHIETBIKHONGMUON);
-                                    })
-                            }
+                            } 
+                            // else {
+                            //     let formData = new FormData();
+                            //     formData.append("goiham", 'LayDanhSachThietBiKhongDuocMuon');
+                            //     const self = this
+                            //     fetch("http://125.253.123.20/managedevice/group.php", {
+                            //         method: "POST",
+                            //         headers: {
+                            //             'Content-Type': 'multipart/form-data',
+                            //         },
+                            //         body: formData,
+                            //     }).then((response) => { console.log(response); return response.json(); })
+                            //         .then((response) => {
+                            //             this.setState({ visibleClear: false, visibleDrawer: true })
+                            //             this.props.saveDataSearch(response.DANHSACHTHIETBIKHONGMUON);
+                            //         })
+                            // }
                         }} >
                             <Image source={icSearch} style={iconStyleSearch} />
                         </TouchableOpacity>
@@ -76,20 +77,27 @@ class Header extends Component {
                             <Image source={icMenu} style={iconStyleMenu} />
                         </TouchableOpacity> : null}
                         {visibleClear ? <TouchableOpacity style={{ position: 'absolute', marginLeft: -50, marginTop: 2 }} onPress={() => {
-                            let formData = new FormData();
-                            formData.append("goiham", 'LayDanhSachThietBiKhongDuocMuon');
-                            const self = this
-                            fetch("http://125.253.123.20/managedevice/group.php", {
-                                method: "POST",
-                                headers: {
-                                    'Content-Type': 'multipart/form-data',
-                                },
-                                body: formData,
-                            }).then((response) => { console.log(response); return response.json(); })
-                                .then((response) => {
-                                    this.setState({ txtSearch: "", visibleClear: false, visibleDrawer: true })
-                                    this.props.saveDataSearch(response.DANHSACHTHIETBIKHONGMUON);
-                                })
+                            this.props.onFetchProduct({
+                                goiham: 'LayDanhSachThietBiKhongDuocMuon',
+                                page: 0
+                            })
+                            this.props.saveDataSearch(this.props.dataSearch.value, false)
+                            this.setState({ txtSearch: "", visibleClear: false, visibleDrawer: true })
+                            // let formData = new FormData();
+                            // formData.append("goiham", 'LayDanhSachThietBiKhongDuocMuon');
+                            // const self = this
+                            // fetch("http://125.253.123.20/managedevice/group.php", {
+                            //     method: "POST",
+                            //     headers: {
+                            //         'Content-Type': 'multipart/form-data',
+                            //     },
+                            //     body: formData,
+
+                            // }).then((response) => { console.log(response); return response.json(); })
+                            //     .then((response) => {
+                            //         this.setState({ txtSearch: "", visibleClear: false, visibleDrawer: true })
+                            //         this.props.saveDataSearch(response.DANHSACHTHIETBIKHONGMUON);
+                            //     })
                         }}>
                             <Image source={icBack} style={iconStyleBack} />
                         </TouchableOpacity> : null}
@@ -161,7 +169,8 @@ const mapStateToProps = (state) => {
 };
 const mapDispatchToProps = (dispatch) => {
     return {
-        saveDataSearch: (data) => dispatch(saveDataSearch(data))
+        saveDataSearch: (data, isSearch) => dispatch(saveDataSearch(data, isSearch)),
+        onFetchProduct: (params) => dispatch(fetchProductAction(params))
     }
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Header)
