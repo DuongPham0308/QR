@@ -12,6 +12,7 @@ import Menu from './Menu';
 import Search from './Search';
 import Borrow from './Borrow'
 import { connect } from 'react-redux'
+import { fetchProductFailedAction } from '../../actions'
 import BackgroundTimer from 'react-native-background-timer';
 
 class Main extends Component {
@@ -35,59 +36,55 @@ class Main extends Component {
     this.userCheck = null
     this.passwordCheck = null
     this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
+      this.props.backPressed(),
       BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
     );
   }
-  save = async(point) => {
-    try{ 
-      await AsyncStorage.setItem("point",point);
-    }
-    catch(e){
-      console.log(e)
-    }
-  }
-  get = async()=>{
+  
+  // get = async()=>{
     
-    try{
-      if (this.userCheck == null) {
-        this.userCheck = await AsyncStorage.getItem("tendangnhap");
-        this.passwordCheck = await AsyncStorage.getItem("password")
-      }
-      if (this.userCheck!= "" && this.passwordCheck!= "" && this.userCheck!= null) {
-        let formData = new FormData();
-        formData.append("goiham", 'KiemTraDangNhap');
-        formData.append("userId", this.userCheck);
-        formData.append("userPassword", this.passwordCheck);
-        fetch("http://125.253.123.20/managedevice/group.php", {
-          method: "POST",
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-          body: formData,
-        }).then((response) => {  console.log(response); return response._bodyText })
-          .then((response) => {
+  //   try{
+  //     if (this.userCheck == null) {
+  //       this.userCheck = await AsyncStorage.getItem("tendangnhap");
+  //       this.passwordCheck = await AsyncStorage.getItem("password")
+  //     }
+  //     if (this.userCheck!= "" && this.passwordCheck!= "" && this.userCheck!= null) {
+  //       let formData = new FormData();
+  //       formData.append("goiham", 'KiemTraDangNhap');
+  //       formData.append("userId", this.userCheck);
+  //       formData.append("userPassword", this.passwordCheck);
+  //       fetch("http://125.253.123.20/managedevice/group.php", {
+  //         method: "POST",
+  //         headers: {
+  //           'Content-Type': 'multipart/form-data',
+  //         },
+  //         body: formData,
+  //       }).then((response) => {  console.log(response); return response._bodyText })
+  //         .then((response) => {
           
-            var arrStr1 = response.split(/[:,]/);
-            var arrStr2 = response.split(/[:}]/);
-            if (arrStr1[1].trim() == "true") {
-              var a = arrStr1[3].trim().slice(1, arrStr1[3].length - 2);
-              var b = arrStr1[7].trim().slice(1, arrStr1[7].length - 3);
-              var c = arrStr1[5].trim().slice(1, arrStr1[5].length - 2);
-              this.props.savePoint(b)
-              this.save(b)
-            }
-            else { 
-           }
-          }
-          )
-      }
-    }
-    catch(e){
-      console.log(e)
-    }
-  }
+  //           var arrStr1 = response.split(/[:,]/);
+  //           var arrStr2 = response.split(/[:}]/);
+  //           if (arrStr1[1].trim() == "true") {
+  //             var a = arrStr1[3].trim().slice(1, arrStr1[3].length - 2);
+  //             var b = arrStr1[7].trim().slice(1, arrStr1[7].length - 3);
+  //             var c = arrStr1[5].trim().slice(1, arrStr1[5].length - 2);
+  //             this.props.savePoint(b)
+  //             this.save(b)
+  //           }
+  //           else { 
+  //          }
+  //         }
+  //         )
+  //     }
+  //   }
+  //   catch(e){
+  //     console.log(e)
+  //   }
+  // }
+
   componentDidMount() {
     this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
+      this.props.backPressed(),
       BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
     );
   }
@@ -99,12 +96,17 @@ class Main extends Component {
             'Exit App',
             'Exiting the application?', [{
               text: 'Cancel',
-              onPress: () =>      { this.logic = true;}
+              onPress: () =>      { 
+                this.logic = true;
+              }
               ,
               style: 'cancel'
             }, {
               text: 'OK',
-              onPress: () => BackHandler.exitApp()
+              onPress: () => {
+                this.props.backPressed(),
+                BackHandler.exitApp()
+              }
             },], {
               cancelable: false
             }
@@ -155,7 +157,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     saveBien: (data) => dispatch(saveNavigation(data)),
-    savePoint: (point) => dispatch(savePoint(point))
+    savePoint: (point) => dispatch(savePoint(point)),
+    backPressed: () => dispatch(fetchProductFailedAction())
   }
 };
 

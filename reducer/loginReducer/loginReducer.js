@@ -13,11 +13,12 @@ const logReducer = (state = [], actions) => {
 
 //Redux persist
 import { persistReducer } from 'redux-persist'
-import storage from 'redux-persist/es/storage'
+import storage from 'redux-persist/lib/storage'
 
 const config = {
-    key: "primary",
-    storage
+    key: "root",
+    storage,
+    debug: true
 }
 const loginReducer = persistReducer(config, logReducer)
 

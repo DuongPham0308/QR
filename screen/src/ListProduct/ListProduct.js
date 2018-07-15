@@ -39,7 +39,7 @@ class ListProduct extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (this.isFirst) {
-            if (nextProps.productData.DANHSACHTHIETBIKHONGMUON.length !== 0) {
+            if (nextProps.productData.length !== 0) {
                 this.itemData = nextProps.productData.DANHSACHTHIETBIKHONGMUON
                 this.isFirst = false
                 this.page = 0
