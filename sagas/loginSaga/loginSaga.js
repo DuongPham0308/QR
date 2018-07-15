@@ -6,7 +6,7 @@ function * fetchLogin(action) {
     try {
         const receivedData = yield Api.login(action.params)
 
-        if (receivedData[0].ketqua === true) {
+        if (receivedData.ketqua === true) {
             yield put({ type: FETCH_LOGIN_SUCCEEDED, receivedData })
         } else {
             yield put({ type: FETCH_LOGIN_FAILED })

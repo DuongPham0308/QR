@@ -1,41 +1,53 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity,BackHandler,Alert,AsyncStorage,Dimensions,Image } from "react-native";
-import Header from './Header/Header'
-import ListProduct from './ListProduct/ListProduct'
-import { StackNavigator } from 'react-navigation'
+import { View, Dimensions, Image } from "react-native";
 import { connect } from 'react-redux'
 import smartlab from '../media/appIcon/smartlab.jpg'
+import { NavigationActions } from 'react-navigation'
+
 class SplashScreen extends Component {
     constructor(props) {
         super(props);
 
-        setTimeout(()=>{
-            this.get()
-        },3000)
+        // setTimeout(()=>{
+        //     this.get()
+        // },3000)
     }
-    get = async()=>{
-        try{
-          var userCheck = await AsyncStorage.getItem("username")
+
+    componentWillMount() {
+      setTimeout(() => {
+
+        if (typeof this.props.loginData.ketqua !== 'undefined') {
+          console.log('Main')
+          this.props.changeMain()
+        } else {
+          console.log('Login')
+          this.props.changeLogin()
+        }
+      }, 3000)
+    }
+    // get = async()=>{
+    //     try{
+    //       var userCheck = await AsyncStorage.getItem("username")
          
-          var passwordCheck = await AsyncStorage.getItem("password")
+    //       var passwordCheck = await AsyncStorage.getItem("password")
           
-          var id = await AsyncStorage.getItem("id")
+    //       var id = await AsyncStorage.getItem("id")
           
-          var point = await AsyncStorage.getItem("point")
+    //       var point = await AsyncStorage.getItem("point")
           
-          this.props.savePoint(point)
-          if (userCheck!= "" && passwordCheck!= "" && userCheck!= null) {
-            this.props.navigation.navigate('Main', { user: userCheck, ID: id, point: point })
-          }
-          else 
-          {
-            this.props.navigation.navigate('Login')
-          }
-        }
-        catch(e){
-          console.log(e)
-        }
-      }
+    //       this.props.savePoint(point)
+    //       if (userCheck!= "" && passwordCheck!= "" && userCheck!= null) {
+    //         this.props.navigation.navigate('Main', { user: userCheck, ID: id, point: point })
+    //       }
+    //       else 
+    //       {
+    //         this.props.navigation.navigate('Login')
+    //       }
+    //     }
+    //     catch(e){
+    //       console.log(e)
+    //     }
+    //   }
     render() {
       const { width, height } = Dimensions.get('window')
         const { user, ID, point } = this.props
@@ -51,12 +63,15 @@ class SplashScreen extends Component {
 }
 const mapStateToProps = (state) => {
     return {
+      loginData: state.loginReducer,
       bienManHinh: state.stack,
       savePointData: state.savePointData
     }
   };
   const mapDispatchToProps = (dispatch) => {
     return {
+      changeLogin: () => dispatch(NavigationActions.navigate({ routeName: 'Login' })),
+      changeMain: () => dispatch(NavigationActions.navigate({ routeName: 'Main' })),
       saveBien: (data) => dispatch(saveNavigation(data)),
       savePoint: (point) => dispatch(savePoint(point))
     }

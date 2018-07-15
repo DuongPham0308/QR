@@ -19,6 +19,8 @@ import {
 import rootSaga from './sagas/rootSaga'
 import { createLogger } from 'redux-logger'
 import { connect } from 'react-redux'
+import { persistStore } from "redux-persist"
+import { PersistGate } from "redux-persist/es/integration/react"
 
 const isDebuggingInChrome = __DEV__ && !!window.navigator.userAgent
 
@@ -47,6 +49,8 @@ const store = createStore(reducer, applyMiddleware(
     logger
 ))
 
+let persistor = persistStore(store)
+
 const AppNavigation = connect(mapStateToProps)(AppNavi)
 
 sagaMiddleware.run(rootSaga)
@@ -58,7 +62,9 @@ class BigScreen extends Component {
     render() {
         return (
             <Provider store = {store}>
-                <AppNavigation/>
+                <PersistGate persistor = {persistor}>
+                    <AppNavigation/>
+                </PersistGate>
             </Provider>
         )
     }

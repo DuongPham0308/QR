@@ -25,9 +25,9 @@ class Main extends Component {
     super(props)
 
     this.state = {
-        user: this.props.loginData[0].userName,
-        ID: this.props.loginData[0].userId,
-        point: this.props.loginData[0].userPoint
+        user: this.props.loginData.userName,
+        ID: this.props.loginData.userId,
+        point: this.props.loginData.userPoint
     }
 
     this.logic = true;
