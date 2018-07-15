@@ -7,6 +7,8 @@ import logoPC from '../media/appIcon/PCwhite1.png'
 var width = Dimensions.get('window').width;
 var height = Dimensions.get('window').height;
 import {connect} from 'react-redux'
+import { fetchLoginFailedAction } from '../../actions'
+
 class Menu extends Component {
     constructor(props) {
         super(props)
@@ -17,20 +19,13 @@ class Menu extends Component {
             point: this.props.loginData.userPoint
         }
     }
-    save = async()=>{
-        try{
-          await AsyncStorage.setItem("username","");
-          await AsyncStorage.setItem("password","");   
-          await AsyncStorage.setItem("point","");
-          await AsyncStorage.setItem("id","");
-          await AsyncStorage.setItem("saveCart",JSON.stringify([]));
-          this.props.navigation.state.routeName = 'Login'      
-          this.props.navigation2.goBack()
-        }
-        catch(e){
-          console.log(e)
-        }
-      }
+
+    save() {
+        this.props.logOut()
+        this.props.navigation.state.routeName = 'Login'
+        this.props.navigation2.goBack()
+    }
+    
     componentDidMount ()
     {
         this.props;
@@ -88,8 +83,10 @@ class Menu extends Component {
                     <View style={{ height: 2, width: width / 9, backgroundColor: 'gray' }}>
                     </View>
                     <TouchableOpacity onPress={() => {
-                        this.props.saveCart([])
-                        this.save(); }} style={btnLogOutStyle} >
+                        // this.props.saveCart([])
+                        this.save()
+                    }} 
+                        style={btnLogOutStyle} >
                         <Text style={btnTextLogOut}>LOG OUT</Text>
                     </TouchableOpacity>
                 </View>
@@ -213,8 +210,8 @@ const mapStateToProps =(state)=> {
     return {
         saveCart: (data) => dispatch(saveCart(data)),
         saveDataSearch: (data) => dispatch(saveDataSearch(data)),
-        savePoint: (point) => dispatch(savePoint(point))
-
+        savePoint: (point) => dispatch(savePoint(point)),
+        logOut: () => dispatch(fetchLoginFailedAction())
     }
 };
   export default connect (mapStateToProps,mapDispatchToProps) (Menu)
